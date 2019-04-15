@@ -1,0 +1,19 @@
+
+Kill Patch:
+Above is a minimally intrusive software patch that uses Linux SIGUSR1 signal handling for ProbeC. In short, this patch software "lingers in the background while ProbeC executes"; the kill_patch awaits and sends one message to the queue, when the user enters the kill command "kill -10 <pid>" in a separate terminal to terminate ProbeC (ask your instructor during a lab period for assistance with using the kill command). This must be the absolute last message sent by ProbeC as it dies. This software is tested & compile under 64-bit Lubuntu 18 & 32-bit Ubuntu 16; it may work in other Linux kernels too - not likely on Mac kernel. Let me know if you get errors.
+
+For added clarity: ProbeC needs to use kill_patch to send the "exit" message to the Hub; that is, this kill_patch message notifies the Hub that ProbeC will have terminated. This "exit" message can be whatever message & whatever mtype that you specify for your software system. You decide what this message contains; it's under your full control.
+
+To use the kill_patch code: Download and save kill_patch.h text file & kill_patch64.o (or 32) binary files (not human readable) into the directory where your source files reside. The ProbeC source code needs to include kill_patch.h file and calls the function kill_patch exactly once (not in a loop), immediately after the msgget function in ProbeC program (for best result). The parameters to this function are self explanatory -- see kill_patch.h file. Be sure to specify the mtype value correctly. Note that your message object should be typecasted to Linux msgbuf pointer data type.
+
+To compile your code: The compilation would use the command: 'g++ your_probe_c.cpp kill_patch64.o' (or 32). The 2 files will compile, link & "fuse" to produce a single executable. Then, execute your ProbeC program as usual.
+
+ 
+Force Patch:
+The force_patch function (see force_patch.h) is used by the Hub to signal and terminate ProbeB after receiving 10,000 messages. This function requires a parameter which is the pid of ProbeB. The most convenient way to determine the pid of ProbB is for ProbeB to use the getpid() function -- see sample program on message queue -- and to send the pid value in its first message to the Hub. This software is tested & compile under 64-bit Lubuntu 18 & 32-bit Ubuntu 16; it may work in other Linux kernels too.
+
+To use the force_patch code: Download and save force_patch.h text file & force_patch64.o (or 32) binary files (not human readable) into the directory where your source files reside. The Hub source code needs to include force_patch.h file and calls the function force_patch, as soon as the message count reaches 10,000. The parameter to this function is the pid of ProbeB -- see force_patch.h.
+
+To compile your code: The compilation would use the command: 'g++ your_hub.cpp force_patch64.o' (or 32). The 2 files will compile, link & "fuse" to produce a single executable. Then, execute your Hub program as usual.
+
+more at https://web.csulb.edu/~rngo/n/326a/assignments.html under "Programming with message queue"
